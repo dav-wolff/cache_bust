@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["cache_bust_core"]
+
+[workspace.package]
+version = "0.1.0"
+authors = ["David Wolff"]
