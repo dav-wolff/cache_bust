@@ -1,0 +1,12 @@
+[package]
+name = "cache_bust_macro"
+version.workspace = true
+authors.workspace = true
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+cache_bust_core.workspace = true
+litrs = "0.4"

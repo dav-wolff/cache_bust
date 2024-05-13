@@ -1,7 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["cache_bust_core"]
+members = ["cache_bust_core", "cache_bust_macro"]
 
 [workspace.package]
 version = "0.1.0"
 authors = ["David Wolff"]
+
+[workspace.dependencies]
+cache_bust_core = { path = "./cache_bust_core", version = "0.1.0" }
