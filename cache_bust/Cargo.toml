@@ -1,0 +1,17 @@
+[package]
+name = "cache_bust"
+version.workspace = true
+authors.workspace = true
+edition = "2021"
+
+[features]
+default = ["macro", "build"]
+macro = ["dep:cache_bust_macro"]
+build = []
+
+
+[dependencies]
+cache_bust_core.workspace = true
+cache_bust_macro = { workspace = true, optional = true }
+walkdir = "2.5"
+

@@ -34,6 +34,7 @@
 					src = craneLib.path ./.;
 					filter = path: type:
 						(hasInfix "/tests/" path) ||
+						(hasInfix "/assets/" path) ||
 						(craneLib.filterCargoSources path type)
 					;
 				};
