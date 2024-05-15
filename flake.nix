@@ -52,14 +52,25 @@
 				};
 				
 				cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+				
+				cli = craneLib.buildPackage (commonArgs // {
+					pname = "cachebust";
+					cargoExtraArgs = "-p cache_bust_cli";
+				});
 			in {
+				packages = {
+					inherit cli;
+				};
+				
 				checks = {
 					test = craneLib.cargoTest (commonArgs // {
 						inherit cargoArtifacts;
+						pname = "cache_bust-test";
 					});
 					
 					clippy = craneLib.cargoClippy (commonArgs // {
 						inherit cargoArtifacts;
+						pname = "cache_bust-clippy";
 						cargoClippyExtraArgs = "--all-targets -- --deny warnings";
 					});
 				};

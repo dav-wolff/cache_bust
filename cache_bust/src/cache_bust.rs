@@ -61,12 +61,19 @@ impl CacheBustBuilder {
 	}
 	
 	pub fn build(self) -> CacheBust {
+		match self.try_build() {
+			Ok(cache_bust) => cache_bust,
+			Err(err) => panic!("{err}"),
+		}
+	}
+	
+	pub fn try_build(self) -> Result<CacheBust, String> {
 		let Some(in_dir) = self.in_dir else {
-			panic!("in_dir must be set");
+			return Err("in_dir must be set".to_owned());
 		};
 		
 		if !in_dir.is_dir() {
-			panic!("{in_dir:?} is not a directory");
+			return Err(format!("{in_dir:?} is not a directory"));
 		}
 		
 		let out_dir = match (self.in_place, self.out_dir) {
@@ -76,18 +83,20 @@ impl CacheBustBuilder {
 				None
 			},
 			(false, Some(out_dir)) => Some(out_dir),
-			(false, None) => panic!("out_dir must be specified or in_place set to true"),
+			(false, None) => return Err("out_dir must be specified or in_place set to true".to_owned()),
 		};
 		
-		if out_dir.as_ref().is_some_and(|out_dir| out_dir.is_file()) {
-			panic!("{out_dir:?} is already a file");
+		if let Some(out_dir) = &out_dir {
+			if out_dir.is_file() {
+				return Err(format!("{out_dir:?} is already a file"));
+			}
 		}
 		
-		CacheBust {
+		Ok(CacheBust {
 			in_dir,
 			out_dir,
 			is_build_script: self.is_build_script,
-		}
+		})
 	}
 }
 

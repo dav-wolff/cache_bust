@@ -1,0 +1,14 @@
+[package]
+name = "cache_bust_cli"
+description = "CLI tool for use in conjunction with the cache_bust crate to add hashes to file names"
+version.workspace = true
+authors.workspace = true
+edition = "2021"
+
+[dependencies]
+cache_bust = { workspace = true, default-features = false, features = ["build"] }
+clap = { version = "4.5", features = ["derive"] }
+
+[[bin]]
+name = "cachebust"
+path = "./src/main.rs"
