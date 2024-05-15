@@ -1,4 +1,4 @@
-use std::{path::PathBuf, str::FromStr};
+use std::{env, path::PathBuf, str::FromStr};
 
 use cache_bust_core::hashed_file_name;
 use litrs::StringLit;
@@ -16,11 +16,11 @@ pub fn asset(token_stream: TokenStream) -> TokenStream {
 	let literal = StringLit::try_from(token).expect("Expected file name as a string");
 	let mut local_path = PathBuf::from_str(literal.value()).expect("Expected a valid path");
 	
-	let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+	let mut path = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR should exist"));
 	path.push("assets");
 	path.push(&local_path);
 	
-	let hashed_file_name = hashed_file_name(&path).expect("Error parsing file");
+	let hashed_file_name = hashed_file_name(&path).unwrap_or_else(|err| panic!("Error parsing file {path:?}: {err}"));
 	
 	if local_path.pop() {
 		local_path.push(hashed_file_name);
