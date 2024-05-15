@@ -14,7 +14,14 @@ pub fn asset(token_stream: TokenStream) -> TokenStream {
 	}
 	
 	let literal = StringLit::try_from(token).expect("Expected file name as a string");
-	let mut local_path = PathBuf::from_str(literal.value()).expect("Expected a valid path");
+	
+	let (local_path, is_absolute) = if literal.value().starts_with('/') {
+		(&literal.value()[1..], true)
+	} else {
+		(literal.value(), false)
+	};
+	
+	let mut local_path = PathBuf::from_str(local_path).expect("Expected a valid path");
 	
 	let mut path = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR should exist"));
 	path.push("assets");
@@ -28,5 +35,13 @@ pub fn asset(token_stream: TokenStream) -> TokenStream {
 		local_path = hashed_file_name.into();
 	}
 	
-	TokenTree::Literal(Literal::string(local_path.to_str().expect("Could not convert path to a string literal"))).into()
+	let local_path = local_path.to_str().expect("Could not convert path to a string literal");
+	
+	let literal = if is_absolute {
+		Literal::string(&format!("/{local_path}"))
+	} else {
+		Literal::string(local_path)
+	};
+	
+	TokenTree::Literal(literal).into()
 }
