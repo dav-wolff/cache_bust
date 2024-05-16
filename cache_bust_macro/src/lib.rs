@@ -27,7 +27,12 @@ pub fn asset(token_stream: TokenStream) -> TokenStream {
 	path.push("assets");
 	path.push(&local_path);
 	
-	let hashed_file_name = hashed_file_name(&path).unwrap_or_else(|err| panic!("Error parsing file {path:?}: {err}"));
+	let mut hashed_file_name = hashed_file_name(&path).unwrap_or_else(|err| panic!("Error parsing file {path:?}: {err}"));
+	
+	// only revert the file_name after hashing to keep the same error reporting
+	if env::var("CACHE_BUST_SKIP_HASHING").is_ok_and(|skip_hashing| skip_hashing == "1") {
+		path.file_name().expect("File name is existent").clone_into(&mut hashed_file_name);
+	}
 	
 	if local_path.pop() {
 		local_path.push(hashed_file_name);
