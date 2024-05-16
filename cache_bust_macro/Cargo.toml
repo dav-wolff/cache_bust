@@ -2,6 +2,10 @@
 name = "cache_bust_macro"
 version.workspace = true
 authors.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
 edition = "2021"
 
 [lib]

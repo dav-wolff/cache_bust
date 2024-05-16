@@ -3,6 +3,10 @@ name = "cache_bust_cli"
 description = "CLI tool for use in conjunction with the cache_bust crate to add hashes to file names"
 version.workspace = true
 authors.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords = ["cache", "hash", "web", "busting", "cli"]
+categories = ["caching", "filesystem", "command-line-utilities"]
 edition = "2021"
 
 [dependencies]
