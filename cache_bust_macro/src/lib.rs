@@ -21,10 +21,11 @@ pub fn asset(token_stream: TokenStream) -> TokenStream {
 		(literal.value(), false)
 	};
 	
-	let mut local_path = PathBuf::from_str(local_path).expect("Expected a valid path");
+	let assets_dir = env::var_os("CACHE_BUST_ASSETS_DIR").unwrap_or("assets".into());
 	
+	let mut local_path = PathBuf::from_str(local_path).expect("Expected a valid path");
 	let mut path = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR should exist"));
-	path.push("assets");
+	path.push(assets_dir);
 	path.push(&local_path);
 	
 	let mut hashed_file_name = hashed_file_name(&path).unwrap_or_else(|err| panic!("Error parsing file {path:?}: {err}"));
