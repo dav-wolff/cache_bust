@@ -1,4 +1,4 @@
-use std::{fs, io, path::PathBuf};
+use std::{fs, io, path::{Path, PathBuf}};
 
 use cache_bust_core::hashed_file_name;
 use walkdir::WalkDir;
@@ -17,6 +17,7 @@ pub struct CacheBustBuilder {
 	out_dir: Option<PathBuf>,
 	in_place: bool,
 	is_build_script: bool,
+	enable_logging: bool,
 }
 
 impl Default for CacheBustBuilder {
@@ -35,6 +36,7 @@ impl Default for CacheBustBuilder {
 			out_dir: None,
 			in_place: false,
 			is_build_script,
+			enable_logging: true,
 		}
 	}
 }
@@ -57,6 +59,11 @@ impl CacheBustBuilder {
 	
 	pub fn is_build_script(mut self, is_build_script: bool) -> Self {
 		self.is_build_script = is_build_script;
+		self
+	}
+	
+	pub fn enable_logging(mut self, enable_logging: bool) -> Self {
+		self.enable_logging = enable_logging;
 		self
 	}
 	
@@ -96,6 +103,7 @@ impl CacheBustBuilder {
 			in_dir,
 			out_dir,
 			is_build_script: self.is_build_script,
+			enable_logging: self.enable_logging,
 		})
 	}
 }
@@ -105,6 +113,15 @@ pub struct CacheBust {
 	in_dir: PathBuf,
 	out_dir: Option<PathBuf>,
 	is_build_script: bool,
+	enable_logging: bool,
+}
+
+macro_rules! log {
+	($do_log: expr, $($msg: tt)*) => {
+		if $do_log {
+			println!($($msg)*);
+		}
+	};
 }
 
 impl CacheBust {
@@ -112,7 +129,13 @@ impl CacheBust {
 		CacheBustBuilder::default()
 	}
 	
-	pub fn execute(&self) -> Result<(), io::Error> {
+	pub fn hash_folder(&self) -> Result<(), io::Error> {
+		if self.is_build_script {
+			println!("cargo::rerun-if-changed={}", self.in_dir.to_str()
+				.unwrap_or_else(|| panic!("could not register a build-time dependency on {:?}", self.in_dir))
+			);
+		}
+		
 		if let Some(out_dir) = &self.out_dir {
 			if out_dir.is_dir() {
 				fs::remove_dir_all(out_dir)?;
@@ -128,12 +151,6 @@ impl CacheBust {
 				continue;
 			}
 			
-			if self.is_build_script {
-				println!("cargo::rerun-if-changed={}", entry.path().to_str()
-					.unwrap_or_else(|| panic!("could not register a build-time dependency on {:?}", entry.path()))
-				);
-			}
-			
 			let hashed_file_name = hashed_file_name(entry.path())?;
 			
 			if let Some(mut dest) = self.out_dir.clone() {
@@ -141,15 +158,49 @@ impl CacheBust {
 				dest.pop();
 				fs::create_dir_all(&dest)?;
 				dest.push(hashed_file_name);
-				println!("[cache_bust/info] copying {:?} -> {dest:?}", entry.path());
+				log!(self.enable_logging, "[cache_bust/info] copying {:?} -> {dest:?}", entry.path());
 				fs::copy(entry.path(), dest)?;
 			} else {
 				let new_path = entry.path().with_file_name(hashed_file_name);
-				println!("[cache_bust/info] moving {:?} -> {new_path:?}", entry.path());
+				log!(self.enable_logging, "[cache_bust/info] moving {:?} -> {new_path:?}", entry.path());
 				fs::rename(entry.path(), new_path)?;
 			}
 		}
 		
 		Ok(())
+	}
+	
+	pub fn hash_file(&self, file: impl AsRef<Path>) -> Result<PathBuf, io::Error> {
+		let file = file.as_ref();
+		
+		let path = self.in_dir.join(file);
+		
+		if self.is_build_script {
+			println!("cargo::rerun-if-changed={}", path.to_str()
+				.unwrap_or_else(|| panic!("could not register a build-time dependency on {:?}", path))
+			);
+		}
+		
+		let hashed_file_name = hashed_file_name(&path)?;
+		
+		let dest = if let Some(mut dest) = self.out_dir.clone() {
+			if file.is_relative() {
+				dest.push(file);
+				dest.pop();
+			}
+			
+			fs::create_dir_all(&dest)?;
+			dest.push(hashed_file_name);
+			log!(self.enable_logging, "[cache_bust/info] copying {path:?} -> {dest:?}");
+			fs::copy(path, &dest)?;
+			dest
+		} else {
+			let new_path = path.with_file_name(hashed_file_name);
+			log!(self.enable_logging, "[cache_bust/info] moving {path:?} -> {new_path:?}");
+			fs::rename(path, &new_path)?;
+			new_path
+		};
+		
+		Ok(dest)
 	}
 }
