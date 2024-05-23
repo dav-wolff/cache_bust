@@ -30,7 +30,7 @@
 				
 				fenixPackage = fenix.packages.${system};
 				fenixToolchain = fenixPackage.stable.defaultToolchain;
-				craneLib = crane.lib.${system}.overrideToolchain fenixToolchain;
+				craneLib = (crane.mkLib pkgs).overrideToolchain fenixToolchain;
 				
 				src = with pkgs.lib; cleanSourceWith {
 					src = craneLib.path ./.;
