@@ -26,7 +26,7 @@ fn out_dir_is_cleared() {
 	CacheBust::builder()
 		.out_dir(temp_dir)
 		.build()
-		.hash_folder().unwrap();
+		.hash_dir().unwrap();
 	
 	assert!(!file_to_delete.exists());
 }
@@ -53,7 +53,7 @@ fn in_to_out_dir() {
 	CacheBust::builder()
 		.out_dir(temp_dir.clone())
 		.build()
-		.hash_folder().unwrap();
+		.hash_dir().unwrap();
 	
 	let mut hello = assets_dir();
 	hello.push("hello.txt");
@@ -137,7 +137,7 @@ fn in_place() {
 		.in_dir(temp_dir)
 		.in_place(true)
 		.build()
-		.hash_folder().unwrap();
+		.hash_dir().unwrap();
 	
 	empty.set_file_name("empty-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 	some_text.set_file_name("some_text-4c2e9e6da31a64c70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3");
@@ -165,7 +165,7 @@ fn in_place_with_out_dir() {
 		.out_dir(create_temp_dir("in_place_with_out_dir2"))
 		.in_place(true)
 		.build()
-		.hash_folder().unwrap();
+		.hash_dir().unwrap();
 	
 	empty.set_file_name("empty-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 	some_text.set_file_name("some_text-4c2e9e6da31a64c70623619c449a040968cdbea85945bf384fa30ed2d5d24fa3");

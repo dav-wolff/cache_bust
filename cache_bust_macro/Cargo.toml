@@ -1,5 +1,6 @@
 [package]
 name = "cache_bust_macro"
+description = "Procedural macro for cache_bust"
 version.workspace = true
 authors.workspace = true
 repository.workspace = true

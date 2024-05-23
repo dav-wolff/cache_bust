@@ -1,3 +1,6 @@
+#![forbid(unsafe_code)]
+#![deny(non_snake_case)]
+
 use std::{path::PathBuf, process};
 
 use cache_bust::CacheBust;
@@ -56,7 +59,7 @@ fn main() {
 	
 	match args.file {
 		None => {
-			cache_bust.hash_folder().unwrap_or_else(|err| {
+			cache_bust.hash_dir().unwrap_or_else(|err| {
 				eprintln!("[cache_bust/error] An error occured:\n{err}");
 				process::exit(1);
 			});

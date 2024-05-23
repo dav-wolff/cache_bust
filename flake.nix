@@ -1,4 +1,6 @@
 {
+	description = "A library for compile-time \"cache busting\", including hashes in file names in order to optimize for caching.";
+	
 	inputs = {
 		nixpkgs = {
 			url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -65,12 +67,10 @@
 				checks = {
 					test = craneLib.cargoTest (commonArgs // {
 						inherit cargoArtifacts;
-						pname = "cache_bust-test";
 					});
 					
 					clippy = craneLib.cargoClippy (commonArgs // {
 						inherit cargoArtifacts;
-						pname = "cache_bust-clippy";
 						cargoClippyExtraArgs = "--all-targets -- --deny warnings";
 					});
 				};

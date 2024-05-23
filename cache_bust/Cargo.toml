@@ -1,5 +1,6 @@
 [package]
 name = "cache_bust"
+description = "A library for compile-time \"cache busting\", including hashes in file names in order to optimize for caching."
 version.workspace = true
 authors.workspace = true
 repository.workspace = true
