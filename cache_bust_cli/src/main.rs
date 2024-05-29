@@ -4,7 +4,7 @@
 use std::{path::PathBuf, process};
 
 use cache_bust::CacheBust;
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 
 #[derive(Parser, Debug)]
 #[command(name = "cachebust", version, about)]
@@ -17,31 +17,30 @@ struct Args {
 	/// A single file to hash instead of the entire directory
 	#[arg(short, long)]
 	file: Option<PathBuf>,
-	/// Prints the name of the hashed file to stdout, only works when --file is given, exclusive with --print-file-path
-	#[arg(long)]
-	print_file_name: bool,
-	/// Prints the path of the hashed file to stdout, only works when --file is given, exclusive with --print-file-name
-	#[arg(long)]
-	print_file_path: bool,
+	/// Prints either the hash, the name of the hashed file, or its path to stdout. Only works when --file is given
+	#[arg(short, long)]
+	print: Option<Print>,
+}
+
+#[derive(ValueEnum, Clone, Copy, Debug)]
+enum Print {
+	Hash,
+	FileName,
+	FilePath,
 }
 
 fn main() {
 	let args = Args::parse();
 	
-	if (args.print_file_name || args.print_file_path) && args.file.is_none() {
-		eprintln!("[cache_bust/error] Options --print-file-name and --print-file-path can only be used in combination with --file");
-		process::exit(1);
-	}
-	
-	if args.print_file_name && args.print_file_path {
-		eprintln!("[cache_bust/error] Options --print-file-name and --print-file-path are mutually exclusive");
+	if args.print.is_some() && args.file.is_none() {
+		eprintln!("[cache_bust/error] Option --print can only be used in combination with --file");
 		process::exit(1);
 	}
 	
 	let mut builder = CacheBust::builder()
 		.in_dir(args.source)
 		.is_build_script(false)
-		.enable_logging(!(args.print_file_name || args.print_file_path));
+		.enable_logging(args.print.is_none());
 	
 	if let Some(out) = args.out {
 		builder = builder.out_dir(out);
@@ -60,21 +59,33 @@ fn main() {
 	match args.file {
 		None => {
 			cache_bust.hash_dir().unwrap_or_else(|err| {
-				eprintln!("[cache_bust/error] An error occured:\n{err}");
+				eprintln!("[cache_bust/error] An error occured: {err}");
 				process::exit(1);
 			});
 		},
 		Some(file) => {
-			let path = cache_bust.hash_file(file).unwrap_or_else(|err| {
-				eprintln!("[cache_bust/error] An error occured:\n{err}");
+			let path = cache_bust.hash_file(&file).unwrap_or_else(|err| {
+				eprintln!("[cache_bust/error] An error occured: {err}");
 				process::exit(1);
 			});
 			
-			if args.print_file_name || args.print_file_path {
-				let result = if args.print_file_name {
-					path.file_name().expect("File should have a name").to_str().map(ToOwned::to_owned)
-				} else {
-					path.canonicalize().expect("Path should be correct").to_str().map(ToOwned::to_owned)
+			if let Some(print) = args.print {
+				let result = match print {
+					Print::FileName => path.file_name().expect("File should have a name").to_str().map(ToOwned::to_owned),
+					Print::FilePath => path.canonicalize().expect("Path should be correct").to_str().map(ToOwned::to_owned),
+					Print::Hash => {
+						let stripped_path = if file.extension().is_some() {
+							path.with_extension("")
+						} else {
+							path
+						};
+						
+						let hash = stripped_path.extension().expect("File should have its hash as an extension")
+							.to_str().map(ToOwned::to_owned).expect("Hash should be valid UTF-8");
+						
+						println!("{hash}");
+						process::exit(0);
+					},
 				};
 				
 				match result {

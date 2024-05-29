@@ -90,8 +90,9 @@ assert_eq!(
 #### CLI-tool
 
 ```sh
-cachebust assets --file generated/script.js --out hashed_assets --print-file-name
-cachebust assets --file generated/script.js --out hashed_assets --print-file-path
+cachebust assets --file generated/script.js --out hashed_assets --print file-name # script.aab9[...].js
+cachebust assets --file generated/script.js --out hashed_assets --print file-path # /path/to/script.aab9[...].js
+cachebust assets --file generated/script.js --out hashed_assets --print hash # aab9[...]
 ```
 
 ## Features
