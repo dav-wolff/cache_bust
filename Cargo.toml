@@ -3,7 +3,7 @@ resolver = "2"
 members = ["cache_bust", "cache_bust_core", "cache_bust_macro", "cache_bust_cli"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.2.0"
 authors = ["David Wolff"]
 repository = "https://github.com/dav-wolff/cache_bust"
 license = "MIT"
@@ -11,6 +11,6 @@ keywords = ["cache", "hash", "web", "busting"]
 categories = ["caching", "filesystem"]
 
 [workspace.dependencies]
-cache_bust = { path = "./cache_bust", version = "0.1.0", default-features = false }
-cache_bust_core = { path = "./cache_bust_core", version = "0.1.0" }
-cache_bust_macro = { path = "./cache_bust_macro", version = "0.1.0" }
+cache_bust = { path = "./cache_bust", version = "0.2.0", default-features = false }
+cache_bust_core = { path = "./cache_bust_core", version = "0.2.0" }
+cache_bust_macro = { path = "./cache_bust_macro", version = "0.2.0" }
