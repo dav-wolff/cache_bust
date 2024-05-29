@@ -1,7 +1,9 @@
 # cache_bust_cli
 
-This is a CLI-tool to be used in combination with **cache_bust**
+This is a CLI-tool to be used in combination with **[cache_bust]**
 to add hashes to file names.
+
+[cache_bust]: https://crates.io/crates/cache_bust
 
 ## Installation
 

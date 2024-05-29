@@ -4,7 +4,7 @@
 
 //! Procedural macro for **[cache_bust]**
 //! 
-//! [cache_bust]: https://github.com/dav-wolff/cache_bust
+//! [cache_bust]: https://crates.io/crates/cache_bust
 
 use std::{env, path::PathBuf, str::FromStr};
 
