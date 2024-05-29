@@ -31,10 +31,10 @@ cachebust assets --out hashed_assets
 
 Rename a single file in-place and print its new name:
 ```sh
-cachebust assets --file image.png --print-file-name # image-d0a2[...].png
+cachebust assets --file image.png --print-file-name # image.d0a2[...].png
 ```
 
 Copy a single file to a new directory with its hash added and print its new path:
 ```sh
-cachebust assets --file image.png --print-file-path # /path/to/image-d0a2[...].png
+cachebust assets --file image.png --print-file-path # /path/to/image.d0a2[...].png
 ```

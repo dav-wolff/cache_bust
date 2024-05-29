@@ -19,7 +19,7 @@ To include an asset in source code, use the `asset!` macro:
 use cache_bust::asset;
 
 let img_src = asset!("images/circle.png");
-assert_eq!(img_src, "images/circle-f04a632bf7de8a58d730988671a9139d6f7b3b197bbc78b6c74a4542eaa4878d.png");
+assert_eq!(img_src, "images/circle.f04a632bf7de8a58d730988671a9139d6f7b3b197bbc78b6c74a4542eaa4878d.png");
 ```
 
 By default this will look for assets in the `assets` directory inside your crate.
@@ -52,7 +52,7 @@ let cache_bust = CacheBust::builder()
 cache_bust.hash_dir()?;
 assert_eq!(
 	std::fs::read("assets/images/circle.png")?,
-	std::fs::read("hashed_assets/images/circle-f04a632bf7de8a58d730988671a9139d6f7b3b197bbc78b6c74a4542eaa4878d.png")?
+	std::fs::read("hashed_assets/images/circle.f04a632bf7de8a58d730988671a9139d6f7b3b197bbc78b6c74a4542eaa4878d.png")?
 );
 ```
 

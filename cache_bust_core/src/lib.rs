@@ -17,7 +17,7 @@ pub fn hashed_file_name(path: &Path) -> Result<OsString, io::Error> {
 	let hash = hex::encode(hash_file(file)?);
 	
 	let mut file_name = path.file_stem().unwrap_or_default().to_owned();
-	file_name.push("-");
+	file_name.push(".");
 	file_name.push(hash);
 	
 	if let Some(extension) = path.extension() {

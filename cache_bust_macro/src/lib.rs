@@ -13,7 +13,7 @@ use litrs::StringLit;
 use proc_macro::{Literal, TokenStream, TokenTree};
 
 /// Converts a file location to its hashed equivalent (e.g. `images/circle.png`
-/// to `images/circle-f04a[...].png`).
+/// to `images/circle.f04a[...].png`).
 /// 
 /// By default this will look for assets in the `assets` directory inside your crate.
 /// To use a different directory set the `CACHE_BUST_ASSETS_DIR` environment variable.
@@ -21,7 +21,7 @@ use proc_macro::{Literal, TokenStream, TokenTree};
 /// 
 /// It's also possible to use an absolute path like `/images/circle.png`. This path will
 /// still be looked up relative to the assets directory and results in
-/// `images/circle-f04a[...].png`.
+/// `images/circle.f04a[...].png`.
 /// 
 /// The hashing of the file name can also be disabled by setting the `CACHE_BUST_SKIP_HASHING`
 /// environment variable to `1`. In this case the macro will act as an identity function,
@@ -34,8 +34,8 @@ use proc_macro::{Literal, TokenStream, TokenTree};
 /// # use cache_bust_macro as cache_bust;
 /// use cache_bust::asset;
 /// 
-/// assert_eq!(asset!("images/circle.png"), "images/circle-f04a632bf7de8a58d730988671a9139d6f7b3b197bbc78b6c74a4542eaa4878d.png");
-/// assert_eq!(asset!("/images/circle.png"), "/images/circle-f04a632bf7de8a58d730988671a9139d6f7b3b197bbc78b6c74a4542eaa4878d.png");
+/// assert_eq!(asset!("images/circle.png"), "images/circle.f04a632bf7de8a58d730988671a9139d6f7b3b197bbc78b6c74a4542eaa4878d.png");
+/// assert_eq!(asset!("/images/circle.png"), "/images/circle.f04a632bf7de8a58d730988671a9139d6f7b3b197bbc78b6c74a4542eaa4878d.png");
 /// ```
 /// 
 /// Compiled with `CACHE_BUST_SKIP_HASHING=1`:
