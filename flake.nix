@@ -56,6 +56,7 @@
 				cargoArtifacts = craneLib.buildDepsOnly commonArgs;
 				
 				cli = craneLib.buildPackage (commonArgs // {
+					inherit cargoArtifacts;
 					pname = "cachebust";
 					cargoExtraArgs = "-p cache_bust_cli";
 				});
